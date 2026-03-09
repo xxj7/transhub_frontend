@@ -69,6 +69,17 @@
                 </v-btn>
               </div>
 
+              <!-- 新增游客登录按钮 -->
+              <div class="d-flex justify-center">
+                <v-btn
+                  style="width: 80%"
+                  color="error"
+                  class="mb-4"
+                  @click="guestLogin"
+                >游客登录
+                </v-btn>
+              </div>
+
               <v-alert class="mt-2" v-if="showAlert" type="error">
                 {{ statement }}
               </v-alert>
@@ -255,6 +266,35 @@ async function login() {
   } catch (error) {
   }
 }
+
+// 游客登录：使用固定账号密码
+const guestLogin = async () => {
+  // 构造登录数据
+  const guestData = {
+    username: 'guest',
+    password: 'guestguest123',
+    cname: cname.value, // 沿用用户当前选择的课程
+  };
+
+  try {
+    const result = await request(APIS.login, { body: JSON.stringify(guestData) });
+
+    if (result.code === 200) {
+      // 登录成功：存储用户信息
+      store.set_name(guestData.username);
+      store.set_role(result.role || 'guest'); // 如果后端返回角色则使用，否则默认 'guest'
+      await router.push({ name: 'help' });     // 跳转到帮助页（与普通登录一致）
+      ElMessage.success('游客登录成功');
+    } else if (result.code === 201) {
+      // 需要等待（比如登录限制）
+      openCountdownBox(result.message);
+    } else {
+      ElMessage.error('游客登录失败，请稍后重试');
+    }
+  } catch (error) {
+    ElMessage.error('网络错误，请检查连接');
+  }
+};
 
 onMounted(async () => {
   try {
