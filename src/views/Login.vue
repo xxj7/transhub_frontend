@@ -49,34 +49,27 @@
               </v-select>
 
               <!-- 登录和注册按钮设置 -->
-              <div class="d-flex justify-center">
+              <div class="d-flex flex-column align-center ga-2 mt-0 mb-0">
                 <v-btn
                   type="submit"
                   style="width: 80%"
                   color="error"
-                  class="mb-4"
-                >登录
+                >
+                  登录
                 </v-btn>
-              </div>
-
-              <div class="d-flex justify-center">
                 <v-btn
                   style="width: 80%"
                   color="error"
-                  class="mb-4"
                   @click="dialogVisible = true"
-                >注册
+                >
+                  注册
                 </v-btn>
-              </div>
-
-              <!-- 新增游客登录按钮 -->
-              <div class="d-flex justify-center">
                 <v-btn
                   style="width: 80%"
                   color="error"
-                  class="mb-4"
                   @click="guestLogin"
-                >游客登录
+                >
+                  游客登录
                 </v-btn>
               </div>
 
@@ -280,19 +273,17 @@ const guestLogin = async () => {
     const result = await request(APIS.login, { body: JSON.stringify(guestData) });
 
     if (result.code === 200) {
-      // 登录成功：存储用户信息
       store.set_name(guestData.username);
-      store.set_role(result.role || 'guest'); // 如果后端返回角色则使用，否则默认 'guest'
-      await router.push({ name: 'help' });     // 跳转到帮助页（与普通登录一致）
+      store.set_role(result.role || 'guest');
+      await router.push({ name: 'help' });
       ElMessage.success('游客登录成功');
     } else if (result.code === 201) {
-      // 需要等待（比如登录限制）
       openCountdownBox(result.message);
     } else {
       ElMessage.error('游客登录失败，请稍后重试');
     }
   } catch (error) {
-    ElMessage.error('网络错误，请检查连接');
+    console.error('游客登录网络异常', error);
   }
 };
 
@@ -339,13 +330,14 @@ onMounted(async () => {
   border: 1px solid rgba(255, 255, 255, 0.3); /* 可选边框美化 */
 }
 
-/* 移动端适配 */
 .mobile-card {
-  height: 350px; /* 桌面端保持固定高度 */
+  min-height: 350px;  /* 最小高度保持不变，实际高度由内容决定 */
+  height: auto;
 }
 
 .mobile-login-card {
-  height: 350px;
+  min-height: 350px;
+  height: 380px;
   width: 300px;
 }
 
