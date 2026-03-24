@@ -231,12 +231,7 @@ async function register() {
   }
 }
 
-async function login() {
-  let data = {
-    username: userId.value,
-    password: password.value,
-    cname: cname.value,
-  };
+async function login_request(data) {
   try {
     const result = await request(APIS.login, {body: JSON.stringify(data)});
     if (result.code === 200) {
@@ -260,6 +255,15 @@ async function login() {
   }
 }
 
+async function login() {
+  let data = {
+    username: userId.value,
+    password: password.value,
+    cname: cname.value,
+  };
+  await login_request(data);
+}
+
 // 游客登录：使用固定账号密码
 const guestLogin = async () => {
   // 构造登录数据
@@ -269,22 +273,7 @@ const guestLogin = async () => {
     cname: cname.value, // 沿用用户当前选择的课程
   };
 
-  try {
-    const result = await request(APIS.login, {body: JSON.stringify(guestData)});
-
-    if (result.code === 200) {
-      store.set_name(guestData.username);
-      store.set_role(result.role || 'guest');
-      await router.push({name: 'help'});
-      ElMessage.success('游客登录成功');
-    } else if (result.code === 201) {
-      openCountdownBox(result.message);
-    } else {
-      ElMessage.error('游客登录失败，请稍后重试');
-    }
-  } catch (error) {
-    console.error('游客登录网络异常', error);
-  }
+  await login_request(guestData);
 };
 
 onMounted(async () => {
