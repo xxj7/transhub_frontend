@@ -49,7 +49,7 @@
               </v-select>
 
               <!-- 登录和注册按钮设置 -->
-              <div class="d-flex flex-column align-center ga-2 mt-0 mb-0">
+              <div class="d-flex flex-column align-center ga-2 mt-0 mb-6">
                 <v-btn
                   type="submit"
                   style="width: 80%"
@@ -270,12 +270,12 @@ const guestLogin = async () => {
   };
 
   try {
-    const result = await request(APIS.login, { body: JSON.stringify(guestData) });
+    const result = await request(APIS.login, {body: JSON.stringify(guestData)});
 
     if (result.code === 200) {
       store.set_name(guestData.username);
       store.set_role(result.role || 'guest');
-      await router.push({ name: 'help' });
+      await router.push({name: 'help'});
       ElMessage.success('游客登录成功');
     } else if (result.code === 201) {
       openCountdownBox(result.message);
@@ -331,13 +331,12 @@ onMounted(async () => {
 }
 
 .mobile-card {
-  min-height: 350px;  /* 最小高度保持不变，实际高度由内容决定 */
+  min-height: 350px; /* 最小高度保持不变，实际高度由内容决定 */
   height: auto;
 }
 
 .mobile-login-card {
   min-height: 350px;
-  height: 380px;
   width: 300px;
 }
 
